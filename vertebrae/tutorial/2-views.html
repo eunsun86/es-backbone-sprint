@@ -1,0 +1,170 @@
+<html>
+  <head>
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../lib/underscore/underscore.js"></script>
+    <script src="../lib/backbone/backbone.js"></script>
+  </head>
+  <body>
+    <script>
+/* 
+  직접 코딩을 할시간 입니다.
+
+  이 section은 난이도가 많이 올라간것 처럼 보일지 모르지만 JavaScript Object, 
+prototypal inheritance, 그리고 `extend`를 잘알기에 Backbone model을 
+이해하는데는 문제가 없을 것입니다.
+
+  document보는거 잊지마세요!
+  http://backbonejs.org/
+*/
+
+/* 
+  사용가능한 model을 만들어 보겠습니다. 
+  Comment model안에 초기값을 설정할수 있는 function과 object를 변경할때 쓰일 function으로 채우세요.
+*/
+var Comment = Backbone.Model.extend({
+  /* 
+      `initialize`에 전달된 argument는 model이 instantiate될때 받는 argument입니다:
+    지금 같은경우 `new Comment(message)`로 instantiate을 하면 message가 `initialize`
+    method의 message argument로 들어가는것이지요.
+  */
+  initialize: function(message) {
+  /* 
+      `votes`의 초기 값을 0으로 설정하고 `message` argument로 받은 value를 
+    message property에 설정하세요.
+    property에 작업 할 때는 setter를 사용해야하는거 잊지 마세요!
+  */
+  },
+  votes: function() {
+  /* 
+      이 model의 `votes` property의 value를 return합니다.
+    property와 작업을 할시에 getter를 사용해야 하는것을 잊지마세요!
+  */
+  },
+  upvote: function(){
+  // `votes` property의 값을 1 올려주세요.
+  }
+
+  // `downvote` method를 만들어주세요; 위에 comma쓰는것을 잊지마세요.
+});
+
+/* - Backbone VIEW ------------------------------------------------------------
+  Model을 만들었으니 model을 표시 할 수있는 view를 만들어 보겠습니다.
+  Backbone View는 Event listener(예: `change` event listen하기)를 등록하고 model중 하나라도 `change`가 될경우 변경된것을 다시 rendering하는 곳입니다.
+
+  예를 들어, comment model이 변경되면 페이지에 comment를 다시 rendering 합니다.
+  
+  어떻게 하면 되는지 한번 해보겠습니다.
+*/
+
+// Model과 마찬가지로 Backbone.View도 확장(`extend`)하여 뷰를 만듭니다.
+var CommentView = Backbone.View.extend({
+  /* 
+    initialize function은 이 class를 사용하여 만든 instance에서 사용할 수있는 method를 정의합니다.
+    이번 같은 경우, 모든 comment view에 `change` event listener를 binding하여 `votes` property가 변경되면 다시 rendering하도록 합니다.
+  */
+  initialize: function() {
+    this.model.on('change:votes', function() {
+    /* 바로 윗줄에 쓰인 코드를 한번 자세히 설명해보겠습니다:
+     * - `this`           => CommentView instance
+     * - `this.model`     => 이 view instance와 연결된 model
+     *   - `this.model`은 아직 설정되지 않았습니다 - 나중에 Comment model로 설정됩니다.
+     * - `this.model.on`  => model에 event listener를 설정합니다.
+     * - `'change:votes'` => 이 첫번째 argument는 무엇을 listen하는지 define합니다.
+     *   - colon(:)을 사용하여 특정 property에 대한 변경 event를 수신 할 수 있습니다.
+     * - `function`       => event가 발생하면 invoke되는 callback function입니다. */
+      this.render();
+    /* - 보통 event listener에서 `this`를 사용하면 window를 가르키기에 쓸모가 없습니다.
+       그러나 Backbone은 `model.on`의 3번째 argument로 `this`를 원하는 model/object로 binding할수 있습니다. 아래줄에 쓰인것 처럼요.*/
+    }, this);
+    /* 우리는 바깥 scope에서 event listener로 `this`를 전달하여 `this`가 window나 다른 임의의 object가 아닌 comment view가 되도록 binding 하도록 하였습니다.*/
+  },
+
+  // 위 event listener에서 `render`라는 method를 사용하고 있습니다.
+  // 그러니 define을 해야 되겠지요.:  
+  render: function() {
+    // step 1(1-rendering.html)에서 한것 처럼 template을 define하겠습니다:
+    var html = [
+      '<div>',
+        '<span class="votes">',
+          this.model.get('votes'),
+        '<span>',
+        '<span class="comment">',
+          this.model.get('message'),
+        '</span>',
+        '</br>',
+      '</div>'
+    ].join('');
+
+    /* 
+      render function을 만들시 우리는 jQuery를 다루어야했습니다. 
+      Backbone은 jQuery 사용을 안하고 처리 할 수있는 편리한 방법을 제공합니다:
+      Backbone의 모든 view에는 `$el`이라고 불리는 jQuery element가 들어가 있습니다.
+      
+      아래 링크에서 간단하게 읽어 보세요, 그리고 나서 여기에 있는 exercise를 해주세요.
+      http://backbonejs.org/#View-$el
+     
+      `$el`은 특정 view의 HTML을 담고 있는 버킥(bucket)과 같습니다.
+      `$el`을 수정하면 페이지의 html이 변경됩니다.
+      각각의 view는 자신 만의 `$el`을 가질 것이고, 항상 `this.$el`을 
+    사용해서 가지고 올수 있습니다.
+     
+      이제 rendering은 `$el`의 html을 setting하는것 처럼 간단합니다. */
+    return this.$el.html(html);
+
+    /* 위에서 우리는 `$el`을 return 하는것을 볼수 있습니다.
+      이 `$el`은 수정되고 업데이트 되었지만 아직 페이지에 보이지는 않습니다.
+
+      아래 몇 줄을 써서 우리는 이것을 페이지에 놓을 것입니다. 
+
+      앞으로 $el만 사용하여 보이는 내용을 수정할 수 있지만 먼저 페이지에 넣어야 합니다.
+      그렇게 하기 위해서는 html을 return하고 page에 append를 해야합니다. */
+  }
+});
+
+// 한번 위에서 만든것을 사용해볼까요?
+
+/* `message`를 첫번째 argument로 받는 Comment class를
+사용하여 새로운 comment model을 만듭니다. */
+var comment = new Comment('This is a message');
+
+// 위에서 만든 comment model을 사용하여 CommentView를 만듭니다.
+//comment가 CommentView와 연결이 되는것이 지요.
+var commentView = new CommentView({ model: comment });
+
+/* 위 코드를 보면 {model: comment} Object로 view를 instantiate 합니다.
+이 Object를 옵션_해시(options hash)라고 합니다. 
+  View를 사용하여 view에 필요한 정보가있는 Object를 전달하면 
+view와 관련된 것들을 설정할 수 있습니다.
+
+  지금 같은 경우, View를 Model에 연관시키는 설정을 하고 있지요.
+
+  NOTE: option hash의 model property의 value로 아무 object를 줄수 없으며, 
+꼭 Backbone model을 주어야 합니다. */
+
+//  page에 view를 append합니다. 이렇게 append를 하기 위해 위 `render` method에서
+// html을 return 한것이지요:
+//  $('body').append(commentView.render());
+
+/* votes의 수는 0 이여야 합니다.
+  우리는 votes의 수를 0으로 comment model에 초기화 setting을 했습니다.
+ 
+  votes의 수를 바꿔 event listener가 잘되는지 한번 볼까요?
+
+  아래를 uncomment하고 page를 reload하세요.
+  그럼 페이지에 보이는 comment 왼쪽 부분에 `1`이라고 적혀있어야 합니다. */
+
+// comment.upvote();
+
+/* 아래의 코드를 console에 써서 실험해보세요.
+위에서와 같이 console에서 comment를 변경할수 있습니다:
+  ```
+  comment.upvote();
+  comment.downvote();
+  ```
+ 
+  console에서 voting up과 voting down을 여러번 해보시고 event listener가
+  view를 update하는것을 보세요. 꽤 좋죠?
+*/
+    </script>
+  </body>
+</html>

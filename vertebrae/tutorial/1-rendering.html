@@ -1,0 +1,173 @@
+<html>
+  <head>
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../lib/underscore/underscore.js"></script>
+    <script src="../lib/backbone/backbone.js"></script>
+  </head>
+  <body>
+    <script>
+// 이제 여러분이 개발할 차례입니다.
+
+/* 
+다음을 구현하며 시작하겠습니다:
+
+여러분에게는 function이 있습니다. 그 function을 message argument를 사용하여 invoke하면 template을 사용하여 그 message를 page에 render합니다.
+
+아래 function의 template 부분은 모든 message에 사용하는 동일한 html입니다.
+
+이 function을 한번 자세히 보겠습니다.
+*/
+var renderSomethingOnThePage = function(message) {
+/* 
+  우리는 페이지에 message를 jQuery를 사용하여 추가한 것이지만, 
+이 HTML 전부가 `element.append` function 호출시 마다 argument로 들어가기를 원치 않습니다.
+
+대신, 우리는 `html`이라는 variable로 먼저 template을 만듭니다.
+
+이제 `html` variable을 사용하여 `element.append` method를 invoke 할 수 있습니다.
+
+이렇게 하면 또 좋은점이 html을 읽기 쉽게 보통 indent하는 방식으로 쓸수가 있습니다.
+*/
+  var html = [
+    '<div>',
+      '<span>',
+        message,
+      '</span>',
+    '</div>',
+    '<br/>'
+  ].join('');
+
+/* Question:
+  위 template을 어떻게 바꾸면 style을 더할수 있을까요?
+*/
+
+/* 
+다음은 이 html 문자열을 페이지 `<body>`에 추가하는 jQuery code입니다.
+
+이 function이 invoke 될때마다 위에 정의 된 html 템플릿이 function argument에 전달한 message와 함께 
+'rendering' 됩니다.
+*/
+  $('body').append(html);
+};
+
+// 한번 사용해 볼까요?:
+renderSomethingOnThePage(
+  'This is an example of how to use our rendering method.');
+
+/* 
+  다음은 몇 가지 예입니다. 
+  위의 rendering function을 invoke 할때마다 그 함수에 define된 template을 사용하여 페이지에 무언가를 그립니다.
+ */
+
+// renderSomethingOnThePage('이 function에 새로운 message를 줄때 마다...');
+// renderSomethingOnThePage('... page <body>에 새로운 message가 rendring 됩니다.');
+
+/* 
+  마지막 exercise에서 배운 것을 다시 살펴 보겠습니다. 
+  우리는 Twilio에서 받은 전화 메시지와 같은 어떠한 API에서 받은 메시지로 작업 할 것입니다.
+
+  다시 말하지만, 우리는 평범한 Backbone Model을 확장하여 Model에 특정한 property를 추가할수 있습니다. 
+
+  일반 Backbone.Model에는 많은 method가 이미 있으므로, 우리가 상호 작용할 Object의 일 부분만 추가하면 됩니다. 
+
+  이번 예제는 전번 예제에서 Backbone을 확장한것과는 조금 다릅니다. 
+  전번 예제에서는 평범한 Backbone을 확장하지 않았습니다. 
+  Model을 전혀 사용하지 않았습니다. 
+  그 예제에서는 Model에 아무것도 쓰지 않았습니다.
+
+  이번에는 Model을 어떠한 Object을 가지고 확장을 하면 좋을지 알아 보도록 하겠습니다.
+ 
+  `extend`가 무슨 뜻이고 어떻게 사용하는지 잘모르시나요? `extend`는 prototype과 inheritance와 관련이 있습니다.
+  만약 잘모르겠으면 선생님에게 물어보세요.
+*/
+var Message = Backbone.Model.extend({  
+/* 
+여러분의 message는 2개의 method를 가지고 있습니다.
+
+첫번째는 `initialize`이고 이것은 Backbone에서 특별한 뜻을 가지고 있는 method입니다.
+
+ajax를 사용할때 `success` 함수를 정의했다면, 일단 서버로부터 데이터가 잘 돌아 오면 invoke된다는 것을 아실것입니다.
+Backbone에서 `initialize`라는 method를 define하면 `initialize` 함수가 정의 된 class를 사용하여 새 Model을 만들 때마다 Backbone에서 그 `initialize` 함수를 호출합니다.
+
+지금 같은경우, 여러분이 `new Message`를 사용하여 Object/Model을 만들때 마다 `initialize` function이 실행되게 됩니다.
+
+여러분이 코딩을 더 하기 전에 `initialize`가 무엇인지 아래 URL의 document를 보고 찾아보세요.
+http://backbonejs.org/#Model-constructor
+*/
+  initialize: function(){
+  /* 
+   * 이 코드는 새로운 message가 만들어 질때마다 실행됩니다.
+   *
+   * 여기서 주목해야하는것은 `this.on()`입니다.
+   *  `this.on()`을 initialize에서 사용하면 model이 만들어 질때마다 event listener를
+   * 무조건 만들어지게 합니다.
+   */
+    this.on(/*YOUR CODE HERE*/);
+    /* 여러분이 직접 event handler를 만들어 보세요.
+     *
+     * 이 model의 message property의 `change` event를 listen할 event listener를 만드세요.
+     * 그리고 `change` event가 발생하면 위에서 만든 `renderSomethingOnThePage` function을 
+     * 이 model의 message property의 value를 argument로 받아 invoke 하세요.
+     * 
+     * 직접 만들어 보고, 이전 exercise(0-models-and-events.html)에서 `change`
+     * event handler가 어떻게 define됬는지 확인하세요.
+     */
+  },
+
+  /* 
+    아래에 있는 이 2번째 method도 이 message Model에서 굉장히 쓸모가 있는 method입니다.
+    훗날 우리 model에 있는 message를 alert해줄 필요가 있을것 입니다.
+    그때 사용하기 위해 이 model에 아래 method를 define합니다.
+   */
+  alertThisMessage: function() {
+    /* 
+      Note: 여러분은 새로운 property들을 앞으로 여러분이 만들 model들에 만들것 입니다. Backbone model이 그 model의 특정 property가 바뀌었다는것을 감지하기 위해서는 getter/setter를 사용해서 그 property들을 변경하여야 합니다.
+
+      만약 여러분이 이 function들에 대하여 궁금하시다면 아래 URL로가 document를
+      읽어 보세요.      
+      http://backbonejs.org/#Model-get
+    */
+    alert(this.get('message'));
+  }
+});
+
+/* 
+2번째 method를 어떻게 사용할까요?
+직접 사용해 보세요, 그리고 이 파일 맨 아래에 답을 확인하세요.
+*/
+
+
+// 직접 써볼까요?: 위에서 만든 Backbone Class를 `instantiate`합니다.
+var myNewMessage = new Message();
+
+// ...그리고나서 model에 message property를 바꾸면 render되는 것을 확인합니다.
+myNewMessage.set({message: 'someMessage'});
+
+
+/* 
+  model이 `change` event를 받으면 rendering되는 것을 확인하세요. 
+  지금까지 Backbone.Model을 extend하여 model을 만들었습니다. 
+  그리고 model에서 사용하는 event listener도 보았습니다. 
+ 
+  우리는 prototype이 무엇인지, 어떻게 작동하는지, 그리고 `.extend`와의 관계를 이해하는 데 유용하다는 점도 언급했습니다.
+
+  마지막으로 주어진 model(이번 예제에서는 message)에 대한 템플릿을 만드는 방법을 살펴 보았습니다.   
+  
+  다음 section에서는 Backbone으로 '템플릿'을 제대로 다루는 방법을 살펴 보겠습니다.
+  template을 다루는 method를 포함한 여러 쓸모있는 method들은 Backbone.View에 들어가 있습니다.
+*/
+
+/* - ANSWERS ------------------------------------------------------------------
+ * To style your template, you could
+ * - Add classes to the div, and a CSS (stylesheet) file
+ *   - '<div class="message">'
+ *   - this is the preferred method
+ * - Add inline styles
+ *   - Inline styles are generally not best practice - prefer stylesheets
+ *
+ *
+ * To call `alertThisMessage` on the object: `myNewMessage.alertThisMessage();`
+ */
+    </script>
+  </body>
+</html>

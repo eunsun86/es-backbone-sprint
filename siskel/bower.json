@@ -1,0 +1,17 @@
+{
+  "name": "siskel",
+  "version": "0.0.0",
+  "authors": "Ken Huh <info@vanillacoding.co>",
+  "description": "A brief introduction to backbone.js events",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "backbone": "~1.3.3",
+    "underscore": "~1.8.3",
+    "jquery": "~3.2.1"
+  }
+}

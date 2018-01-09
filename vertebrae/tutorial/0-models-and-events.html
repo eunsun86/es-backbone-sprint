@@ -1,0 +1,122 @@
+<html>
+  <head>
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../lib/underscore/underscore.js"></script>
+    <script src="../lib/backbone/backbone.js"></script>
+  </head>
+  <body>
+  <script>
+/* - MVC ----------------------------------------------------------------------
+  MVC (Model-View-Controller) 프레임 워크는 app을 관리 가능한
+구성 요소로 분리 구성하여 이해하기 쉽게 만듭니다.
+
+  Backbone.js는 계층적(hierarchical) MVC 입니다.
+Model은 Collection에 담겨 관리함으로서 여러분의 데이터를 track합니다.
+
+  보통:
+    - `Model`들은 여러분의 data를 track합니다.
+    - `View`들은 여러분의 model을 render하여 app의 data를 사용자에게 보여줍니다.
+
+  지금은 `Model`부터 시작하여 한 번에 하나씩 집중적으로 살펴 보겠습니다.
+exercise를 하면서 [documentation](http://backbonejs.org/)에서 답을 찾아 보세요.
+*/
+
+/* - Backbone MODEL -----------------------------------------------------------
+  Backbone.js는 Model class를 제공합니다.
+이 Model class에 여러분의 app에 필요한 property/method를 확장해 보도록 하겠습니다.
+
+  여기서 각 Model이 HTML로 rendering되는 방법에 대한 정보를 저장합니다.
+
+  또한 Model은 특정한 기능들이 저장된 곳이기도 합니다.
+
+  기억해야 할것: Model은 단지 Object일뿐입니다.
+`Model`이란 단어는 app의 데이터를 저장하는 데 사용되는 object에 대해
+이야기하는데 쓰는 단어입니다.
+`Model`은 Backbone.js(및 기타 유사한 프레임 워크)의 기술 용어입니다.
+*/
+
+var Tweet = Backbone.Model.extend({
+/*
+  이것은 단순한 Backbone Model입니다. 특별히 추가할 파트같은 것은 없습니다.
+Backbone.Model은 단지 JavaScript class에 불과합니다.
+
+  우리가 extend를 사용하여 일반적인 class instance 생성자를 사용하여
+pseudoclassical 계층 구조를 설정하는것과 다들것이 없습니다.
+  - 참고 : Backbone에서 extend는 underscore에서 본 것과 같은 함수가 아닙니다!
+
+  Backbone.Model.extend는 Backbone.Model을 subclass하는데 사용됩니다.
+
+  Backbone.Model.extend는 결론적으로 prototype에 제공된 property가있는
+constructor function을 만듭니다.
+*/
+});
+
+/* Backbone model은 pseudoclassic형식으로 instantiate됩니다: */
+var myTweet = new Tweet();
+
+/*
+  Backbone model들은 data를 저장하기위한 것이기에 Backbone에서 제공해주는
+getter와 setter를 이해하는 것이 중요합니다.
+*/
+myTweet.set('message', 'Hello, world!');
+
+/*
+  http://backbonejs.org/#Model-get
+  위 URL에서 문서를 참고하여 model의 `message` property를 가지고 오고 아래 alert를 사용하여 보여주세요.
+*/
+// window.alert(YOUR CODE HERE);
+
+/* - Backbone EVENTS ----------------------------------------------------------
+  Backbone은 jQuery를 사용하여 DOM에서 event를 등록하는 것과 마찬가지로 모델에서 event를 수신하는 기능을 제공합니다.
+
+  model의 어떤 것이 바뀌면 우리는 그 변화를 listen하고 event가 발생할 때 그에 따라 대응할 수 있습니다. listener를 등록하려면 `model.on` method를 사용하면 됩니다.
+
+  `model.on`은 2개의 argument들을 받을수 있습니다:
+    1. 발생한 event 이름.
+    2. 이벤트가 발생할 때하고 싶은 일을하는 함수(즉, event handler, 또는 callback function).
+
+  Backbone.js는 `change`와 같은 event를 기본적으로 제공합니다.
+  이 이벤트는 Model에서 변경된 사항이 있으면 자동으로 trigger됩니다.
+  property가 Model에 추가되거나 삭제되거나 변경될때 이 `change` event는 자동으로 trigger됩니다.
+
+  첫번째 event를 listen하기 전에, 아래 reference를 한번 봐주세요.
+  http://backbonejs.org/#Events-on
+*/
+
+
+/* model의 `change` event를 listen하세요: */
+myTweet.on('change',
+  function(/* 이곳의 argument는 change된것의 정보를 가지고 있습니다: */ e) {
+    // 무엇이 `change`됬는지 알아 봅니다.
+    console.info('Something in this tweet model was changed!');
+    console.log(e);
+
+    // `change`된 property를 log하세요:
+    // console.log(YOUR CODE HERE);
+  }
+);
+
+/*
+  Backbone은 getter/setter를 통해 작동합니다.
+
+  Model에 무언가를 일반적인 JavaScript Object에서 바뀌는것 처럼 변경한다면
+Backbone의 `change` event는 trigger되지 않습니다.
+
+*/
+// myTweet.message = '이렇게 사용하면 않됩니다!';
+
+/*
+  위에서 사용하는것 처럼 사용하면 않되고 프레임 워크가 제공하는
+getter/setter를 사용하여야 합니다.
+http://backbonejs.org/#Model-set 에서 getter/setter사용법을 검토하고
+`change` listener를 만드는 한 줄짜리 코드를 작성하십시오:
+*/
+
+// myTweetYOUR CODE HERE;
+
+/*
+`change` event가 발생하면, 1-rendering.html section으로 넘어가세요.
+*/
+  </script>
+  </body>
+</html>

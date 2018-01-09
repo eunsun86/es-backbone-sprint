@@ -1,0 +1,153 @@
+<html>
+  <head>
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../lib/underscore/underscore.js"></script>
+    <script src="../lib/backbone/backbone.js"></script>
+  </head>
+  <body>
+    <script>
+/* 
+이 section을 시작하기 전에 document를 조금이라도 읽으 셔야 합니다.
+다른 section을 완료하기 전까지는 이 section을 보지 마세요!
+
+documentation 읽는것을 잊지마세요.
+http://backbonejs.org/
+*/
+
+/* - Backbone COLLECTION ------------------------------------------------------
+Collection은 여러분의 model을 정리하는데 사용됩니다.
+Backbone은 event 전파(propagation)라는 편리한 기능을 가지고 있습니다.
+model과 view를 이용하여 어떻게 쓰는지 보겠습니다. */
+var Comment = Backbone.Model.extend({
+  /* 이전에 했던 exercise와는 비교도 않될정도로 힘든 exercise입니다.
+  이 exercise 하기전에 이전 exercise를 꼭 다 하세요.
+  */
+  // 초기 value 0 votes
+  defaults: {
+    votes: 0
+  },
+
+  initialize: function(message, votes) {
+    this.set('message', message);
+    if (votes) { this.set('votes', votes); }
+  },
+
+  // mode.get이나 model.set을 안해도 되는 편리한 function
+  votes: function(votes) {
+    if (arguments.length) {
+      this.set('votes', votes);
+      return votes;
+    } else {
+      return this.get('votes');
+    }
+  }
+});
+
+var CommentView = Backbone.View.extend({
+  initialize: function() {
+    this.model.on('change:votes', this.render, this);
+  },
+  render: function() {
+    var html = [
+      '<div>',
+        '<span class="votes">',
+          this.model.get('votes'),
+        '<span>',
+        '<span class="comment">',
+          this.model.get('message'),
+        '</span>',
+        '</br>',
+      '</div>'
+    ].join('');
+
+    return this.$el.html(html);
+    /* 
+이와 같이 model property를 rendering하면 XSS 공격에 노출 될 수 있습니다.
+실제 app에서는 template을 사용하여 다음과 같이 보호해야합니다.
+underscore의 _.template에서 <%- 이스케이프 된 문자 %>.
+당장은 걱정할 필요가 없습니다. */
+  }
+});
+/* 
+위에서 저희는 model을 만들었습니다. 그런데 이렇게 생긴 model들이 많으면 어떻게 관리할까요?
+collection에 넣어 사용하면 편할것 같습니다.
+*/
+var Comments = Backbone.Collection.extend({
+  /* 
+  collection안의 모든 것이 이 Comment class instance여야합니다. 
+  이 설정은 우리에게 편리한 기능을 제공할뿐 꼭 사용하지 않아도 됩니다. 아래 documentation을 확인하세요.
+  http://backbonejs.org/#Collection-model 
+  */
+  model: Comment
+});
+
+/* collection을 사용하는 이유는 우리의 model들을 track해야 하기 때문입니다.
+ * 이 collection을 사용하여:
+ * - collection안에 있는 comment들을 display하세요.
+ * - comment의 총 votes 수가 몇인지 알아보세요.
+ *
+ * 위에 있는것들을 하려면 새로운 view를 만들어야 합니다. */
+var CommentsView = Backbone.View.extend({
+  /* 
+    예전 exercise와 같이 이번해도 `initialize` function을 사용하여
+  listener들을 등록 해야 합니다.
+    지금 같은경우, collection안 model들의 vote count가 어떻게 바뀌는지 알아야 합니다. */
+  initialize: function() {
+    /* 
+    Backbone event가 model에서 발생시 이 발생된 event는 collection에 같은 event를
+    발생시킵니다. 그렇기에 collection안의 model을 관리 하기가 쉽습니다.
+    */
+    this.collection.on('change:votes', this.render, this);
+  },
+
+  // collection을 render합니다:
+  render: function() {
+    var html = [
+      '<ul>',
+      '</ul>',
+      '<span class="votes">',
+        // The total number of votes
+        this.collection.reduce(function(memo, comment) {
+          return memo + comment.get('votes');
+        }, 0),
+      '</span>'
+    ].join('');
+
+    this.$el.html(html);
+    /* 
+      collection안에 있는 각 model을 `<li>`에 담아 render하세요.
+      underscore function을 사용할수 있다는것을 잊지 마세요. 
+      HINT: CommentView.render에 `li`가 있어야할듯 합니다
+    */
+    this.$el.find('ul').append(this.collection.map(function(comment) {
+      // YOUR CODE HERE
+    }));
+
+    return this.$el;
+  }
+});
+
+// 다 구현 했으면 다음을 해보도록 하겠습니다:
+
+/* 
+  Comment class를 사용하여 새로운 comment model을 만듭니다.
+*/
+var commentList = [
+  new Comment('Doug!'), // default to 0 votes
+  new Comment('Doug?', 1),
+  new Comment('Doug.', 2),
+  new Comment('"Doug".', 3),
+  new Comment('Doug?!', 4)
+];
+
+// 위 commentList를 새로운 collection에 넣습니다.
+var comments = new Comments(commentList);
+
+// view와 collection을 연결합니다
+var commentsView = new CommentsView({ collection: comments });
+
+// page에 append합니다.(아래 코드를 uncomment 하세요):
+// $('body').append(commentsView.render());
+    </script>
+  </body>
+</html>
